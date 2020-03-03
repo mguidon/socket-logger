@@ -1,0 +1,4 @@
+aiohttp
+aiologger
+python-socketio
+requests
