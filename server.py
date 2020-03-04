@@ -17,20 +17,17 @@ sio.attach(app)
 
 class SocketIOLogRedirect(handlers.streams.AsyncStreamHandler):
     async def emit(self, record: records.LogRecord):
-        print("log emitted", record.get_message())
         await sio.emit('log', f"[{record.name}] {record.asctime} {record.levelname}: {record.get_message()}")
 
 log_redirector = SocketIOLogRedirect()
 logger.add_handler(log_redirector)
 
 async def background_task():
-    """Example of how to send server generated events to clients."""
     count = 0
     while True:
         await sio.sleep(1)
         count += 1
-        print(count)
-        await sio.emit('message', {'data': 'Server generated event'})
+        await logger.debug(f'This is log number {count} from server')
 
 @sio.event
 async def on_connect(sid, environ):
@@ -38,13 +35,9 @@ async def on_connect(sid, environ):
     await sio.emit('my_message', "asdfasdf")
 
 @sio.event
-async def message(sid, data):
-    await logger.debug('message %s', data)
-
-@sio.event
 async def disconnect(sid):
     print(sid, type(sid))
-    await logger.debug('disconnect %s', sid)
+    await logger.debug(f'disconnect {sid}')
 
 if __name__ == '__main__':
    sio.start_background_task(background_task)
