@@ -8,7 +8,6 @@ def connect():
 
 @sio.event
 def log(data):
-    print("Log received")
     print(data)
 
 @sio.event

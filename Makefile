@@ -10,6 +10,11 @@
 		wheel
 	@$@/bin/pip --no-cache install -r requirements.txt
 	
+PYINC := $(shell python3-config --includes)
+.PHONY: build
+build: ## builds the c++ example extension
+	g++ -fpic --shared $(PYINC) hello.cpp -o hello.so
+
 
 # MISC ---------------------------------------------------------------
 
